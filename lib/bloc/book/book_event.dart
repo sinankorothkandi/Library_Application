@@ -10,6 +10,9 @@ class LoadBooksEvent extends BookEvent {
   final int limit;
 
   LoadBooksEvent({this.page = 1, this.limit = 10});
+
+  @override
+  List<Object> get props => [page, limit];
 }
 class AddBookEvent extends BookEvent {
   final Book book;
@@ -19,7 +22,14 @@ class AddBookEvent extends BookEvent {
   @override
   List<Object?> get props => [book];
 }
+class SearchBooksEvent extends BookEvent {
+  final String query;
 
+  SearchBooksEvent({required this.query});
+
+  @override
+  List<Object?> get props => [query];
+}
 class UpdateBookEvent extends BookEvent {
   final int id;
   final Book updatedBook;

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:library_application/bloc/book/book_bloc.dart';
-import 'package:library_application/presentation/screens/auther_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class BookPage extends StatefulWidget {
+  const BookPage({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _BookPageState createState() => _BookPageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _BookPageState extends State<BookPage> {
+  String searchQuery = '';
+
   @override
   void initState() {
     super.initState();
-    // Trigger the event to load books when the screen is initialized
+    // Load the books when the page is initialized
     context.read<BookBloc>().add(LoadBooksEvent());
   }
 
@@ -20,43 +23,94 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Books List'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => AuthorsPage()));
+        title: const Text('Book App'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (query) {
+                setState(() {
+                  searchQuery = query;
+                });
+                context.read<BookBloc>().add(SearchBooksEvent(query: query));
               },
-              icon: Icon(Icons.abc))
-        ],
+              decoration: InputDecoration(
+                hintText: 'Search books or authors...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                prefixIcon: const Icon(Icons.search),
+              ),
+            ),
+          ),
+        ),
       ),
       body: BlocBuilder<BookBloc, BookState>(
         builder: (context, state) {
           if (state is BookLoadingState) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (state is BookLoadedState) {
-            return ListView.builder(
-              itemCount: state.books.length,
+            final books = state.books;
+
+            // Filter books based on the search query
+           final filteredBooks = books.where((book) {
+  return book.title.toLowerCase().contains(searchQuery.toLowerCase());
+  // Note: We won't filter by author here since we don't have author names yet
+}).toList();
+
+
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(8.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.75,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),
+              itemCount: filteredBooks.length,
               itemBuilder: (context, index) {
-                final book = state.books[index];
-                return ListTile(
-                  leading: Image.network(book.coverPictureURL),
-                  title: Text(book.title),
-                  subtitle: Text(book.author), // Display author name
+                final book = filteredBooks[index];
+                return Card(
+                  elevation: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          book.coverPictureURL,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(book.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                          Text('Author: ${book.author}', style: const TextStyle(color: Colors.grey)),
+
+                            const SizedBox(height: 4),
+                            Text('Price: \$${book.price}',
+                                style: const TextStyle(color: Colors.blue)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             );
           } else if (state is BookErrorState) {
-            return Center(
-              child: Text(state.errorMessage),
-            );
+            print(state.errorMessage);
+            return Center(child: Text(state.errorMessage));
           }
-
-          return Center(
-            child: Text('No books available'),
-          );
+          return const Center(child: Text('No books available.'));
         },
       ),
     );

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:library_application/bloc/Author/author_bloc.dart';
+import 'package:library_application/bloc/author/author_bloc.dart';
 
-class AuthorsPage extends StatefulWidget {
+class AuthorPage extends StatefulWidget {
   @override
-  _AuthorsPageState createState() => _AuthorsPageState();
+  _AuthorPageState createState() => _AuthorPageState();
 }
 
-class _AuthorsPageState extends State<AuthorsPage> {
+class _AuthorPageState extends State<AuthorPage> {
   @override
   void initState() {
     super.initState();
-    // Trigger the event to load authors when the screen is initialized
+    // Load authors when the page is initialized
     context.read<AuthorBloc>().add(LoadAuthorsEvent());
   }
 
@@ -19,7 +19,7 @@ class _AuthorsPageState extends State<AuthorsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Authors List'),
+        title: Text('All Authors'),
       ),
       body: BlocBuilder<AuthorBloc, AuthorState>(
         builder: (context, state) {
@@ -31,15 +31,17 @@ class _AuthorsPageState extends State<AuthorsPage> {
               itemBuilder: (context, index) {
                 final author = state.authors[index];
                 return ListTile(
+                  leading: CircleAvatar(
+                    child: Text(author.name[0]),  // First letter of the author name
+                  ),
                   title: Text(author.name),
+                  subtitle: Text(author.biography),
                 );
               },
             );
           } else if (state is AuthorErrorState) {
             return Center(child: Text(state.message));
           }
-
-          // Default case when no authors are available
           return Center(child: Text('No authors available.'));
         },
       ),
