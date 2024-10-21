@@ -1,46 +1,4 @@
-// class Book {
-//   final String id;
-//   final String title;
-//   final String author;  // Updated to hold the author name later
-//   final String coverPictureURL;
-//   final String description;
-//   final double price;  // Add price field
 
-//   Book({
-//     required this.id,
-//     required this.title,
-//     required this.author,
-//     required this.coverPictureURL,
-//     required this.description,
-//     required this.price,  // Add price to constructor
-//   });
-
-//   // Factory method to convert JSON to Book object
-//   factory Book.fromJson(Map<String, dynamic> json) {
-//     return Book(
-//       id: json['id'],
-//       title: json['title'],
-//       author: json['authorId'],  // Initially hold authorId
-//       coverPictureURL: json['coverPictureURL'],
-//       description: json['description'],
-//       price: json['price'],  // Make sure the 'price' field exists in the API response
-//     );
-//   }
-
-//   // Method to update author after fetching name
-//   Book copyWith({String? author}) {
-//     return Book(
-//       id: id,
-//       title: title,
-//       author: author ?? this.author,
-//       coverPictureURL: coverPictureURL,
-//       description: description,
-//       price: price,  // Keep the price unchanged
-//     );
-//   }
-// }
-
-//========================================================
 class Book {
   final String id;
   final String title;

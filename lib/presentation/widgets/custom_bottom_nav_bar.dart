@@ -42,6 +42,8 @@ import 'package:library_application/presentation/screens/auther_screen.dart'; //
 import 'package:library_application/presentation/screens/home_screen.dart'; // Ensure this is the correct path
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -49,10 +51,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  // Update to include the correct pages
-  static List<Widget> _pages = <Widget>[
-    BookPage(),  // Assuming HomeScreen is the first page
-    AuthorPage(),  // Ensure AuthorPage is correctly imported
+  static final List<Widget> _pages = <Widget>[
+    const BookPage(),
+    AuthorPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -64,20 +65,21 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex], // Show the selected page
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Color.fromARGB(255, 233, 133, 2),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Books', // Label for the first page
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Authors', // Label for the second page
+            icon: Icon(Icons.account_circle),
+            label: 'Authors',
           ),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped, // Update the selected page when tapped
+        onTap: _onItemTapped,
       ),
     );
   }
