@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:library_application/bloc/book/book_bloc.dart';
+import 'package:library_application/presentation/widgets/book_shimmer.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({super.key});
@@ -16,7 +17,6 @@ class _BookPageState extends State<BookPage> {
   @override
   void initState() {
     super.initState();
-    // Load the books when the page is initialized
     context.read<BookBloc>().add(LoadBooksEvent());
   }
 
@@ -41,9 +41,9 @@ class _BookPageState extends State<BookPage> {
                   context.read<BookBloc>().add(SearchBooksEvent(query: query));
                 },
                 decoration: InputDecoration(
-                  hintText: 'Searchs...',
+                  hintText: 'Search...',
                   filled: true,
-                  fillColor: const Color.fromARGB(255, 241, 241, 241),
+                  fillColor: const Color.fromARGB(255, 247, 247, 247),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide.none,
@@ -61,16 +61,13 @@ class _BookPageState extends State<BookPage> {
         body: BlocBuilder<BookBloc, BookState>(
           builder: (context, state) {
             if (state is BookLoadingState) {
-              return const Center(child: CircularProgressIndicator());
+              return buildShimmerEffect();
             } else if (state is BookLoadedState) {
               final books = state.books;
-
-              // Filter books based on the search query
               final filteredBooks = books.where((book) {
                 return book.title
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase());
-                // Note: We won't filter by author here since we don't have author names yet
               }).toList();
 
               return GridView.builder(
@@ -85,12 +82,10 @@ class _BookPageState extends State<BookPage> {
                 itemBuilder: (context, index) {
                   final book = filteredBooks[index];
                   return GestureDetector(
-                    onTap: (){
-                       context.go('/book/${book.id}', extra: book);
+                    onTap: () {
+                      context.go('/book/${book.id}', extra: book);
                     },
                     child: Card(
-                      
-                      elevation: 0,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -125,7 +120,6 @@ class _BookPageState extends State<BookPage> {
                 },
               );
             } else if (state is BookErrorState) {
-              print(state.errorMessage);
               return Center(child: Text(state.errorMessage));
             }
             return const Center(child: Text('No books available.'));

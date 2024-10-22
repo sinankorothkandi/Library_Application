@@ -20,7 +20,6 @@ class BookBloc extends Bloc<BookEvent, BookState> {
   Future<void> _onLoadBooks(LoadBooksEvent event, Emitter<BookState> emit) async {
     emit(BookLoadingState());
     try {
-      // Fetching books from the repository
       final books = await bookRepository.getBooks(page: event.page, limit: event.limit);
       emit(BookLoadedState(books));
     } catch (e) {

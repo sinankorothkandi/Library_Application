@@ -2,7 +2,7 @@
 class Book {
   final String id;
   final String title;
-  final String author;  // This should be initialized properly
+  final String author;
   final String coverPictureURL;
   final String description;
   final double price;
@@ -10,7 +10,7 @@ class Book {
   Book({
     required this.id,
     required this.title,
-    required this.author,  // Make sure this is initialized
+    required this.author, 
     required this.coverPictureURL,
     required this.description,
     required this.price,
@@ -20,14 +20,13 @@ class Book {
     return Book(
       id: json['id'],
       title: json['title'],
-      author: authorName.isNotEmpty ? authorName : 'Unknown', // Ensure a fallback value
-      coverPictureURL: json['coverPictureURL'] ?? '', // Provide a default value for URL
-      description: json['description'] ?? '', // Provide a default value for description
+      author: authorName.isNotEmpty ? authorName : 'Unknown', 
+      coverPictureURL: json['coverPictureURL'] ?? '', 
+      description: json['description'] ?? '', 
       price: (json['price'] is int) ? (json['price'] as int).toDouble() : (json['price'] as double),
     );
   }
 
-  // Implementing copyWith method
   Book copyWith({
     String? id,
     String? title,

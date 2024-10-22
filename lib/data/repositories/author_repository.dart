@@ -16,7 +16,6 @@ class AuthorRepository {
           List<dynamic> authorsData = jsonResponse['result'];
 
           // Log the fetched authors data
-          print('All Authors Fetched: $authorsData');
 
           return authorsData.map((data) => Author.fromJson(data)).toList();
         } else {
@@ -26,31 +25,55 @@ class AuthorRepository {
         throw Exception('Failed to load authors from API');
       }
     } catch (error) {
-      print('Error: $error');
       throw Exception('Failed to load authors: $error');
     }
   }
+  // Add author function
 
-  //====================================
+ Future<Author?> addAuthor({
+    required String name,
+    required String birthdate,
+    required String biography,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(authorApiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'name': name,
+          'birthdate': birthdate,
+          'biography': biography,
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        return Author.fromJson(jsonResponse);
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
+
   Future<Author?> getAuthorById(String authorId) async {
   if (authorId.isEmpty) {
-    print('Error: authorId is empty.');
-    return null; // Return null if the authorId is empty
+    return null; 
   }
   try {
     final response = await http.get(Uri.parse('$authorApiUrl/$authorId'));
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}'); // Log the full response body
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return Author.fromJson(jsonResponse);
     } else {
-      print('Failed to load author: ${response.statusCode}');
       return null;
     }
   } catch (error) {
-    print('Error fetching author: $error');
-    return null; // Handle errors gracefully
+    return null; 
   }
 }
 

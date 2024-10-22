@@ -1,8 +1,7 @@
-
 class Author {
   final String id;
   final String name;
-  final String birthdate; // Store birthdate as a String (you can format it if needed)
+  final String birthdate;
   final String biography;
 
   Author({
@@ -12,13 +11,20 @@ class Author {
     required this.biography,
   });
 
-  // Factory constructor to create an Author object from JSON
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
-      id: json['id'] ?? 'Unknown', // Handle null values
-      name: json['name'] ?? 'Unknown', // Handle null values
-      birthdate: json['birthdate'] ?? 'Unknown', // Handle null values
-      biography: json['biography'] ?? 'No biography available', // Handle null values
+      id: json['id'] ?? 'Unknown', 
+      name: json['name'] ?? 'Unknown', 
+      birthdate: json['birthdate'] ?? 'Unknown', 
+      biography: json['biography'] ?? 'No biography available', 
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'birthdate': birthdate,
+      'biography': biography,
+    };
   }
 }
